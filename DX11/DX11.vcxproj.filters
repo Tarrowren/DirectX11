@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="InputClass.cpp">
+      <Filter>输入</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsClass.cpp">
+      <Filter>图形</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemClass.cpp">
+      <Filter>系统</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DClass.cpp">
+      <Filter>Direct3D</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorShaderClass.cpp">
+      <Filter>着色器</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelClass.cpp">
+      <Filter>模型</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraClass.cpp">
+      <Filter>摄像机</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="InputClass.h">
+      <Filter>输入</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsClass.h">
+      <Filter>图形</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemClass.h">
+      <Filter>系统</Filter>
+    </ClInclude>
+    <ClInclude Include="D3DClass.h">
+      <Filter>Direct3D</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShaderClass.h">
+      <Filter>着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelClass.h">
+      <Filter>模型</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraClass.h">
+      <Filter>摄像机</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="系统">
+      <UniqueIdentifier>{738ea9bd-49b3-4010-94a5-f47c6708de54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="图形">
+      <UniqueIdentifier>{1ac2fd94-17da-40ed-9cbc-aba7baccf37b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="输入">
+      <UniqueIdentifier>{19037a42-8208-4c2c-aa54-80f3a276f955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Direct3D">
+      <UniqueIdentifier>{391f66b5-be6a-43b7-b02c-9f519641ae0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器">
+      <UniqueIdentifier>{7bd514d5-3f8c-4260-bf97-7d093dd6617d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="模型">
+      <UniqueIdentifier>{1c7a1c87-9aab-48a2-ba83-18230ae06c44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="摄像机">
+      <UniqueIdentifier>{91b54b65-c527-4831-8ee3-76866f1b8b62}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VertexShader.hlsl">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="PixelShader.hlsl">
+      <Filter>着色器</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="cube.txt">
+      <Filter>模型</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
