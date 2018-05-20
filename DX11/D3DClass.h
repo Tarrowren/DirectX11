@@ -26,6 +26,10 @@ public:
 	void GetWorldMatrix(XMMATRIX&);//世界矩阵
 	void GetOrthoMatrix(XMMATRIX&);//正面投影矩阵
 	void GetVideoCardInfo(char*, int&);//独显信息
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+	void TurnOnAlphaBlending();
+	void TurnOffAlphaBlending();
 
 private:
 
@@ -43,5 +47,8 @@ private:
 	XMMATRIX m_projectionMatrix;//投影矩阵
 	XMMATRIX m_worldMatrix;//世界矩阵
 	XMMATRIX m_orthoMatrix;//正面投影矩阵
+	ID3D11DepthStencilState* m_depthDisabledStencilState;
+	ID3D11BlendState* m_alphaEnableBlendingState;
+	ID3D11BlendState* m_alphaDisableBlendingState;
 
 };

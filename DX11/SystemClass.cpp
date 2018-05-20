@@ -3,6 +3,9 @@
 SystemClass::SystemClass() {
 	m_Input = 0;
 	m_Graphics = 0;
+	m_Fps = 0;
+	m_Cpu = 0;
+	m_Timer = 0;
 }
 
 SystemClass::~SystemClass() {
@@ -10,8 +13,11 @@ SystemClass::~SystemClass() {
 }
 
 bool SystemClass::Initialize() {
-	int screenWidth = 0, screenHeight = 0;
+	int screenWidth, screenHeight;
 	bool result;
+
+	screenWidth = 0;
+	screenHeight = 0;
 
 	//初始化Windows API
 	InitializeWindows(screenWidth, screenHeight);
@@ -33,24 +39,57 @@ bool SystemClass::Initialize() {
 		return false;
 	}
 
+	//创建并初始化Fps对象
+	m_Fps = new FpsClass;
+	if (!m_Fps) {
+		return false;
+	}
+	m_Fps->Initialize();
+
+	//创建并初始化Cpu对象
+	m_Cpu = new CpuClass;
+	if (!m_Cpu) {
+		return false;
+	}
+	m_Cpu->Initialize();
+
+	//创建并初始化Timer对象
+	m_Timer = new TimerClass;
+	if (!m_Timer) {
+		return false;
+	}
+	result = m_Timer->Initialize();
+	if (!result) {
+		MessageBox(m_hwnd, L"无法初始化Timer对象", L"错误", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 void SystemClass::Shutdown() {
-	//释放输入对象
+	if (m_Timer) {
+		delete m_Timer;
+		m_Timer = 0;
+	}
+	if (m_Cpu) {
+		m_Cpu->Shutdown();
+		delete m_Cpu;
+		m_Cpu = 0;
+	}
+	if (m_Fps) {
+		delete m_Fps;
+		m_Fps = 0;
+	}
 	if (m_Input) {
 		delete m_Input;
 		m_Input = 0;
 	}
-
-	//关闭并释放图形对象
 	if (m_Graphics) {
 		m_Graphics->Shutdown();
 		delete m_Graphics;
 		m_Graphics = 0;
 	}
-
-	//关闭窗口
 	ShutdownWindows();
 
 	return;
@@ -89,13 +128,22 @@ void SystemClass::Run() {
 bool SystemClass::Frame() {
 	bool result;
 
+	m_Timer->Frame();
+	m_Fps->Frame();
+	m_Cpu->Frame();
+
 	//按下退出键
 	if (m_Input->IsKeyDown(VK_ESCAPE)) {
 		return false;
 	}
 
 	//对图形对象执行帧处理
-	result = m_Graphics->Frame();
+	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime());
+	if (!result) {
+		return false;
+	}
+
+	result = m_Graphics->Render();
 	if (!result) {
 		return false;
 	}

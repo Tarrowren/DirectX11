@@ -1,21 +1,23 @@
-#include"ColorShaderClass.h"
+#include"LightShaderClass.h"
 
-ColorShaderClass::ColorShaderClass() {
+LightShaderClass::LightShaderClass() {
 	m_vertexShader = 0;
 	m_pixelShader = 0;
 	m_layout = 0;
+	m_sampleState = 0;
 	m_matrixBuffer = 0;
+	m_lightBuffer = 0;
 }
 
-ColorShaderClass::~ColorShaderClass() {
+LightShaderClass::~LightShaderClass() {
 
 }
 
-bool ColorShaderClass::Initialize(ID3D11Device *device, HWND hwnd) {
+bool LightShaderClass::Initialize(ID3D11Device *device, HWND hwnd) {
 	bool result;
 
 	//初始化顶点和像素着色器
-	result = InitializeShader(device, hwnd, (WCHAR*)L"VertexShader.hlsl", (WCHAR*)L"PixelShader.hlsl");
+	result = InitializeShader(device, hwnd, (WCHAR*)L"LightVertexShader.hlsl", (WCHAR*)L"LightPixelShader.hlsl");
 	if (!result) {
 		return false;
 	}
@@ -23,17 +25,17 @@ bool ColorShaderClass::Initialize(ID3D11Device *device, HWND hwnd) {
 	return true;
 }
 
-void ColorShaderClass::Shutdown() {
+void LightShaderClass::Shutdown() {
 	ShutdownShader();
 
 	return;
 }
 
-bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix) {
+bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor) {
 	bool result;
 
 	//设置将用于渲染的着色器参数
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, diffuseColor);
 	if (!result) {
 		return false;
 	}
@@ -44,21 +46,23 @@ bool ColorShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	return true;
 }
 
-bool ColorShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename) {
+bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename) {
 	HRESULT result;
 	ID3D10Blob* errorMessage;
 	ID3D10Blob* vertexShaderBuffer;
 	ID3D10Blob* pixelShaderBuffer;
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[3];
 	unsigned int numElements;
+	D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC matrixBufferDesc;
+	D3D11_BUFFER_DESC lightBufferDesc;
 
 	errorMessage = 0;
 	vertexShaderBuffer = 0;
 	pixelShaderBuffer = 0;
 
 	//编译顶点着色器代码
-	result = D3DCompileFromFile(vsFilename, NULL, NULL, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage);
+	result = D3DCompileFromFile(vsFilename, NULL, NULL, "LightVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage);
 	if (FAILED(result)) {
 		//如果着色器编译失败，它应该写入错误信息
 		if (errorMessage) {
@@ -73,7 +77,7 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	}
 
 	//编译像素着色器代码
-	result = D3DCompileFromFile(psFilename, NULL, NULL, "ColorPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
+	result = D3DCompileFromFile(psFilename, NULL, NULL, "LightPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
 	if (FAILED(result)) {
 		//如果着色器编译失败，它应该写入错误信息
 		if (errorMessage) {
@@ -109,12 +113,20 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	polygonLayout[0].InstanceDataStepRate = 0;
 
 	polygonLayout[1].SemanticIndex = 0;
-	polygonLayout[1].SemanticName = "COLOR";
-	polygonLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[1].SemanticName = "TEXCOORD";
+	polygonLayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	polygonLayout[1].InputSlot = 0;
 	polygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[1].InstanceDataStepRate = 0;
+
+	polygonLayout[2].SemanticIndex = 0;
+	polygonLayout[2].SemanticName = "NORMAL";
+	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[2].InputSlot = 0;
+	polygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	polygonLayout[2].InstanceDataStepRate = 0;
 
 	//获取布局中元素的数量
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
@@ -145,14 +157,57 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
+	//创建一个纹理采样器状态描述
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	//创建纹理采样器状态
+	result = device->CreateSamplerState(&samplerDesc, &m_sampleState);
+	if (FAILED(result)) {
+		return false;
+	}
+
+	//设置像素着色器中的光动态常量缓冲区的描述
+	//请注意，如果使用D3D11_BIND_CONSTANT_BUFFER或CreateBuffer失败，则ByteWidth总是需要为16的倍数
+	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	lightBufferDesc.ByteWidth = sizeof(LightBufferType);
+	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	lightBufferDesc.MiscFlags = 0;
+	lightBufferDesc.StructureByteStride = 0;
+
+	//创建常量缓冲区指针，以便我们可以从该类中访问顶点着色器常量缓冲区
+	result = device->CreateBuffer(&lightBufferDesc, NULL, &m_lightBuffer);
+	if (FAILED(result)) {
+		return false;
+	}
+
 	return true;
 }
 
-void ColorShaderClass::ShutdownShader() {
-	//释放矩阵常量缓冲区、布局、像素着色器和顶点着色器
+void LightShaderClass::ShutdownShader() {
+	if (m_lightBuffer) {
+		m_lightBuffer->Release();
+		m_lightBuffer = 0;
+	}
 	if (m_matrixBuffer) {
 		m_matrixBuffer->Release();
 		m_matrixBuffer = 0;
+	}
+	if (m_sampleState) {
+		m_sampleState->Release();
+		m_sampleState = 0;
 	}
 	if (m_layout) {
 		m_layout->Release();
@@ -170,9 +225,9 @@ void ColorShaderClass::ShutdownShader() {
 	return;
 }
 
-void ColorShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename) {
+void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename) {
 	char* compileErrors;
-	unsigned long long bufferSize, i;
+	unsigned long long bufferSize;
 	ofstream fout;
 
 	//获取指向错误消息文本缓冲区的指针
@@ -184,7 +239,7 @@ void ColorShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 	//将错误信息写入文件
 	fout.open("shader_error.txt");
 
-	for (i = 0; i < bufferSize; i++) {
+	for (int i = 0; i < bufferSize; i++) {
 		fout << compileErrors[i];
 	}
 
@@ -198,10 +253,11 @@ void ColorShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 	return;
 }
 
-bool ColorShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix) {
+bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor) {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
+	LightBufferType* dataPtr2;
 	unsigned int bufferNumber;
 
 	//确保在将矩阵发送到着色器之前进行转置，这是DirectX 11的一项要求
@@ -232,10 +288,35 @@ bool ColorShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	//最后使用更新的值在顶点着色器中设置常量缓冲区
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &m_matrixBuffer);
 
+	deviceContext->PSSetShaderResources(0, 1, &texture);
+
+	//锁定光常量缓冲区，以便写入
+	result = deviceContext->Map(m_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result)) {
+		return false;
+	}
+
+	//获取指向常量缓冲区中数据的指针
+	dataPtr2 = (LightBufferType*)mappedResource.pData;
+
+	//将照明变量复制到常量缓冲区中
+	dataPtr2->diffuseColor = diffuseColor;
+	dataPtr2->lightDirection = lightDirection;
+	dataPtr2->padding = 0.0f;
+
+	//解锁常量缓冲区
+	deviceContext->Unmap(m_lightBuffer, 0);
+
+	//在像素着色器中设置光常量缓冲区的位置
+	bufferNumber = 0;
+
+	//最后用更新后的值设置像素着色器中的光常量缓冲区
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
+
 	return true;
 }
 
-void ColorShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount) {
+void LightShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount) {
 	//设置顶点输入布局
 	deviceContext->IASetInputLayout(m_layout);
 
@@ -243,7 +324,10 @@ void ColorShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int inde
 	deviceContext->VSSetShader(m_vertexShader, NULL, 0);
 	deviceContext->PSSetShader(m_pixelShader, NULL, 0);
 
-	//开始渲染
+	//在像素着色器中设置采样器状态
+	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
+
+	//渲染三角形
 	deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	return;

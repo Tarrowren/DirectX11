@@ -2,10 +2,12 @@
 #include"D3DClass.h"
 #include"CameraClass.h"
 #include"ModelClass.h"
-#include"ColorShaderClass.h"
+#include"LightShaderClass.h"
+#include"LightClass.h"
+#include"TextClass.h"
 
 const bool FULL_SCREEN = false;//全屏
-const bool VSYNC_ENABLED = true;//垂直同步
+const bool VSYNC_ENABLED = false;//垂直同步
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
 
@@ -18,10 +20,7 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
-
-private:
-
+	bool Frame(int, int, float);
 	bool Render();
 
 private:
@@ -29,6 +28,8 @@ private:
 	D3DClass * m_Direct3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
-	ColorShaderClass* m_ColorShader;
+	LightShaderClass* m_LightShader;
+	LightClass* m_Light;
+	TextClass* m_Text;
 
 };

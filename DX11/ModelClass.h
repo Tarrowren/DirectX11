@@ -3,6 +3,8 @@
 #include<DirectXMath.h>
 #include<fstream>
 
+#include"TextureClass.h"
+
 using namespace DirectX;
 using namespace std;
 
@@ -14,13 +16,15 @@ private:
 	struct VertexType
 	{
 		XMFLOAT3 position;
-		XMFLOAT4 color;
+		XMFLOAT2 texture;
+		XMFLOAT3 normal;
 	};
 
 	//模型定义
 	struct ModelType {
 		float x, y, z;
-		float a, b, c, d;
+		float tu, tv;
+		float nx, ny, nz;
 	};
 
 public:
@@ -28,17 +32,21 @@ public:
 	ModelClass();
 	~ModelClass();
 
-	bool Initialize(ID3D11Device*, WCHAR*);
+	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, WCHAR*, char*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	int GetIndexCount();
+	ID3D11ShaderResourceView* GetTexture();
 
 private:
 
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
+
+	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
+	void ReleaseTexture();
 
 	bool LoadModel(WCHAR*);
 	void ReleaseModel();
@@ -47,5 +55,6 @@ private:
 
 	ID3D11Buffer * m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;
+	TextureClass* m_texture;
 	ModelType* m_model;
 };

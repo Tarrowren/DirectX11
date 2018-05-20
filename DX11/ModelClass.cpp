@@ -3,6 +3,7 @@
 ModelClass::ModelClass() {
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
+	m_texture = 0;
 	m_model = 0;
 }
 
@@ -10,7 +11,7 @@ ModelClass::~ModelClass() {
 
 }
 
-bool ModelClass::Initialize(ID3D11Device* device,WCHAR* modelFilename) {
+bool ModelClass::Initialize(ID3D11Device* device, ID3D11DeviceContext * deviceContext, WCHAR* modelFilename, char* textureFilename) {
 	bool result;
 
 	//加载模型数据
@@ -25,10 +26,17 @@ bool ModelClass::Initialize(ID3D11Device* device,WCHAR* modelFilename) {
 		return false;
 	}
 
+	//为这个模型加载纹理
+	result = LoadTexture(device, deviceContext, textureFilename);
+	if (!result) {
+		return false;
+	}
+
 	return true;
 }
 
 void ModelClass::Shutdown() {
+	ReleaseTexture();
 	ShutdownBuffers();
 	ReleaseModel();
 
@@ -44,6 +52,10 @@ void ModelClass::Render(ID3D11DeviceContext* deviceContext) {
 
 int ModelClass::GetIndexCount() {
 	return m_indexCount;
+}
+
+ID3D11ShaderResourceView* ModelClass::GetTexture() {
+	return m_texture->GetTexture();
 }
 
 bool ModelClass::InitializeBuffers(ID3D11Device* device) {
@@ -67,11 +79,12 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device) {
 	//将顶点发送到GPU的顺序非常重要
 	for (int i = 0; i < m_vertexCount; i++) {
 		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
-		vertices[i].color = XMFLOAT4(m_model[i].a, m_model[i].b, m_model[i].c, m_model[i].d);
+		vertices[i].texture = XMFLOAT2(m_model[i].tu, m_model[i].tv);
+		vertices[i].normal = XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
 
 		indices[i] = i;
 	}
-	
+
 	//设置静态顶点缓冲区的描述
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(VertexType)* m_vertexCount;
@@ -152,10 +165,36 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext) {
 	return;
 }
 
+bool ModelClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename) {
+	bool result;
+
+	//创建并初始化纹理对象
+	m_texture = new TextureClass();
+	if (!m_texture) {
+		return false;
+	}
+	result = m_texture->Initialize(device, deviceContext, filename);
+	if (!result) {
+		return false;
+	}
+
+	return true;
+}
+
+void ModelClass::ReleaseTexture() {
+	if (m_texture) {
+		m_texture->Shutdown();
+		delete m_texture;
+		m_texture = 0;
+	}
+
+	return;
+}
+
 bool ModelClass::LoadModel(WCHAR* filename) {
 	ifstream fin;
 	char input;
-	
+
 	fin.open(filename);
 	if (fin.fail()) {
 		return false;
@@ -188,7 +227,8 @@ bool ModelClass::LoadModel(WCHAR* filename) {
 	//读取顶点数据
 	for (int i = 0; i < m_vertexCount; i++) {
 		fin >> m_model[i].x >> m_model[i].y >> m_model[i].z;
-		fin >> m_model[i].a >> m_model[i].b >> m_model[i].c >> m_model[i].d;
+		fin >> m_model[i].tu >> m_model[i].tv;
+		fin >> m_model[i].nx >> m_model[i].ny >> m_model[i].nz;
 	}
 
 	fin.close();

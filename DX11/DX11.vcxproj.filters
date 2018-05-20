@@ -14,14 +14,38 @@
     <ClCompile Include="D3DClass.cpp">
       <Filter>Direct3D</Filter>
     </ClCompile>
-    <ClCompile Include="ColorShaderClass.cpp">
-      <Filter>着色器</Filter>
-    </ClCompile>
     <ClCompile Include="ModelClass.cpp">
       <Filter>模型</Filter>
     </ClCompile>
     <ClCompile Include="CameraClass.cpp">
       <Filter>摄像机</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureClass.cpp">
+      <Filter>纹理</Filter>
+    </ClCompile>
+    <ClCompile Include="LightClass.cpp">
+      <Filter>光</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsClass.cpp">
+      <Filter>帧数</Filter>
+    </ClCompile>
+    <ClCompile Include="CpuClass.cpp">
+      <Filter>CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerClass.cpp">
+      <Filter>计时器</Filter>
+    </ClCompile>
+    <ClCompile Include="TextClass.cpp">
+      <Filter>文字</Filter>
+    </ClCompile>
+    <ClCompile Include="FontClass.cpp">
+      <Filter>字体</Filter>
+    </ClCompile>
+    <ClCompile Include="LightShaderClass.cpp">
+      <Filter>着色器</Filter>
+    </ClCompile>
+    <ClCompile Include="FontShaderClass.cpp">
+      <Filter>着色器</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -37,14 +61,38 @@
     <ClInclude Include="D3DClass.h">
       <Filter>Direct3D</Filter>
     </ClInclude>
-    <ClInclude Include="ColorShaderClass.h">
-      <Filter>着色器</Filter>
-    </ClInclude>
     <ClInclude Include="ModelClass.h">
       <Filter>模型</Filter>
     </ClInclude>
     <ClInclude Include="CameraClass.h">
       <Filter>摄像机</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureClass.h">
+      <Filter>纹理</Filter>
+    </ClInclude>
+    <ClInclude Include="LightClass.h">
+      <Filter>光</Filter>
+    </ClInclude>
+    <ClInclude Include="FpsClass.h">
+      <Filter>帧数</Filter>
+    </ClInclude>
+    <ClInclude Include="CpuClass.h">
+      <Filter>CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerClass.h">
+      <Filter>计时器</Filter>
+    </ClInclude>
+    <ClInclude Include="TextClass.h">
+      <Filter>文字</Filter>
+    </ClInclude>
+    <ClInclude Include="FontClass.h">
+      <Filter>字体</Filter>
+    </ClInclude>
+    <ClInclude Include="LightShaderClass.h">
+      <Filter>着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="FontShaderClass.h">
+      <Filter>着色器</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -69,12 +117,39 @@
     <Filter Include="摄像机">
       <UniqueIdentifier>{91b54b65-c527-4831-8ee3-76866f1b8b62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="光">
+      <UniqueIdentifier>{72479343-33c3-4a9d-97eb-8a0eeabdcb3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="纹理">
+      <UniqueIdentifier>{b4fafd64-2ac9-4784-970b-80f322104042}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="计时器">
+      <UniqueIdentifier>{de358a5b-a30f-4b14-8cb1-e5525e4dcc85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="帧数">
+      <UniqueIdentifier>{854a7d12-d884-4d5e-bafa-adf85378487c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CPU">
+      <UniqueIdentifier>{9e0b6f9e-d6a0-4f4b-b1c8-975365845840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="文字">
+      <UniqueIdentifier>{c45b670f-9f89-41f9-a399-b7ac7d8cf81a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="字体">
+      <UniqueIdentifier>{e23adae2-7dbf-479a-8b73-7d94f37e285c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="VertexShader.hlsl">
+    <None Include="FontPixelShader.hlsl">
       <Filter>着色器</Filter>
     </None>
-    <None Include="PixelShader.hlsl">
+    <None Include="FontVertexShader.hlsl">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="LightPixelShader.hlsl">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="LightVertexShader.hlsl">
       <Filter>着色器</Filter>
     </None>
   </ItemGroup>
