@@ -110,26 +110,22 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width) {
 	imageSize = width * height * 4;
 
 	targaImage = new unsigned char[imageSize];
-	if (!targaImage)
-	{
+	if (!targaImage) {
 		return false;
 	}
 
 	count = (unsigned int)fread(targaImage, 1, imageSize, filePtr);
-	if (count != imageSize)
-	{
+	if (count != imageSize) {
 		return false;
 	}
 
 	error = fclose(filePtr);
-	if (error != 0)
-	{
+	if (error != 0) {
 		return false;
 	}
 
 	m_targaData = new unsigned char[imageSize];
-	if (!m_targaData)
-	{
+	if (!m_targaData) {
 		return false;
 	}
 

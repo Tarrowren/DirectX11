@@ -9,8 +9,11 @@ D3DClass::D3DClass() {
 	m_depthStencilState = 0;
 	m_depthStencilView = 0;
 	m_rasterState = 0;
+	m_rasterStateNoCulling = 0;
+	m_rasterStateWireframe = 0;
 	m_depthDisabledStencilState = 0;
 	m_alphaEnableBlendingState = 0;
+	m_alphaEnableBlendingState2 = 0;
 	m_alphaDisableBlendingState = 0;
 }
 
@@ -23,8 +26,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	IDXGIFactory *factory;
 	IDXGIAdapter *adapter;//适配器
 	IDXGIOutput *adapterOutput;//适配器输出
-	unsigned int numModes, i, numerator, denominator;
-	//unsigned long long stringLength;
+	unsigned int numModes, numerator, denominator;
 	size_t stringLength;
 	DXGI_MODE_DESC *displayModeList;//显示模式列表
 	DXGI_ADAPTER_DESC adapterDesc;//适配器描述
@@ -80,7 +82,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	}
 
 	//遍历所有的显示模式，找到匹配屏幕的宽度和高度，并存储显示器刷新率的分子和分母。
-	for (i = 0; i < numModes; i++) {
+	for (unsigned int i = 0; i < numModes; i++) {
 		if (displayModeList[i].Width == (unsigned int)screenWidth) {
 			if (displayModeList[i].Height == (unsigned int)screenHeight) {
 				numerator = displayModeList[i].RefreshRate.Numerator;
@@ -282,6 +284,33 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	//设置光栅器状态
 	m_deviceContext->RSSetState(m_rasterState);
 
+	//设置栅格描述，关闭背面剔除
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+
+	//创建无剔除光栅化器状态
+	result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateNoCulling);
+	if (FAILED(result)) {
+		return false;
+	}
+
+	//设置允许线框渲染的光栅描述
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	//创建线框光栅化器状态
+	result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateWireframe);
+	if (FAILED(result)) {
+		return false;
+	}
+
 	//设置渲染视点
 	viewport.Width = (float)screenWidth;
 	viewport.Height = (float)screenHeight;
@@ -331,13 +360,15 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
 
-	blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
-	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendStateDescription.AlphaToCoverageEnable = FALSE;
+	blendStateDescription.IndependentBlendEnable = false;
+	blendStateDescription.RenderTarget[0].BlendEnable = true;
 	blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
 	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 
 	result = m_device->CreateBlendState(&blendStateDescription, &m_alphaEnableBlendingState);
@@ -345,9 +376,26 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 		return false;
 	}
 
-	blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+	blendStateDescription.RenderTarget[0].BlendEnable = false;
+	blendStateDescription.AlphaToCoverageEnable = false;
 
 	result = m_device->CreateBlendState(&blendStateDescription, &m_alphaDisableBlendingState);
+	if (FAILED(result)) {
+		return false;
+	}
+
+	blendStateDescription.AlphaToCoverageEnable = true;
+	blendStateDescription.IndependentBlendEnable = false;
+	blendStateDescription.RenderTarget[0].BlendEnable = true;
+	blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+	result = m_device->CreateBlendState(&blendStateDescription, &m_alphaEnableBlendingState2);
 	if (FAILED(result)) {
 		return false;
 	}
@@ -359,13 +407,29 @@ void D3DClass::Shutdown() {
 	if (m_swapChain) {
 		m_swapChain->SetFullscreenState(false, NULL);
 	}
-	if (m_alphaEnableBlendingState) {
-		m_alphaEnableBlendingState->Release();
-		m_alphaEnableBlendingState = 0;
+	if (m_alphaEnableBlendingState2) {
+		m_alphaEnableBlendingState2->Release();
+		m_alphaEnableBlendingState2 = 0;
 	}
 	if (m_alphaDisableBlendingState) {
 		m_alphaDisableBlendingState->Release();
 		m_alphaDisableBlendingState = 0;
+	}
+	if (m_alphaEnableBlendingState) {
+		m_alphaEnableBlendingState->Release();
+		m_alphaEnableBlendingState = 0;
+	}
+	if (m_depthDisabledStencilState) {
+		m_depthDisabledStencilState->Release();
+		m_depthDisabledStencilState = 0;
+	}
+	if (m_rasterStateWireframe) {
+		m_rasterStateWireframe->Release();
+		m_rasterStateWireframe = 0;
+	}
+	if (m_rasterStateNoCulling) {
+		m_rasterStateNoCulling->Release();
+		m_rasterStateNoCulling = 0;
 	}
 	if (m_rasterState) {
 		m_rasterState->Release();
@@ -375,35 +439,26 @@ void D3DClass::Shutdown() {
 		m_depthStencilView->Release();
 		m_depthStencilView = 0;
 	}
-	if (m_depthDisabledStencilState) {
-		m_depthDisabledStencilState->Release();
-		m_depthDisabledStencilState = 0;
-	}
 	if (m_depthStencilState) {
 		m_depthStencilState->Release();
 		m_depthStencilState = 0;
 	}
-
 	if (m_depthStencilBuffer) {
 		m_depthStencilBuffer->Release();
 		m_depthStencilBuffer = 0;
 	}
-
 	if (m_renderTargetView) {
 		m_renderTargetView->Release();
 		m_renderTargetView = 0;
 	}
-
 	if (m_deviceContext) {
 		m_deviceContext->Release();
 		m_deviceContext = 0;
 	}
-
 	if (m_device) {
 		m_device->Release();
 		m_device = 0;
 	}
-
 	if (m_swapChain) {
 		m_swapChain->Release();
 		m_swapChain = 0;
@@ -411,33 +466,6 @@ void D3DClass::Shutdown() {
 
 	return;
 }
-
-void D3DClass::TurnOnAlphaBlending() {
-	float blendFactor[4];
-
-	blendFactor[0] = 0.0f;
-	blendFactor[1] = 0.0f;
-	blendFactor[2] = 0.0f;
-	blendFactor[3] = 0.0f;
-
-	m_deviceContext->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
-
-	return;
-}
-
-void D3DClass::TurnOffAlphaBlending() {
-	float blendFactor[4];
-
-	blendFactor[0] = 0.0f;
-	blendFactor[1] = 0.0f;
-	blendFactor[2] = 0.0f;
-	blendFactor[3] = 0.0f;
-
-	m_deviceContext->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
-
-	return;
-}
-
 
 void D3DClass::BeginScene(float red, float green, float blue, float alpha) {
 	float color[4];
@@ -506,6 +534,69 @@ void D3DClass::TurnZBufferOn() {
 
 void D3DClass::TurnZBufferOff() {
 	m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
+
+	return;
+}
+
+void D3DClass::EnableAlphaBlending() {
+	float blendFactor[4];
+
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+
+	m_deviceContext->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
+
+	return;
+}
+
+void D3DClass::DisableAlphaBlending() {
+	float blendFactor[4];
+
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+
+	m_deviceContext->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
+
+	return;
+}
+
+void D3DClass::TurnOnCulling() {
+	m_deviceContext->RSSetState(m_rasterState);
+
+	return;
+}
+
+void D3DClass::TurnOffCulling() {
+	m_deviceContext->RSSetState(m_rasterStateNoCulling);
+
+	return;
+}
+
+void D3DClass::EnableAlphaToCoverageBlending() {
+	float blendFactor[4];
+
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+
+	m_deviceContext->OMSetBlendState(m_alphaEnableBlendingState2, blendFactor, 0xffffffff);
+
+	return;
+}
+
+void D3DClass::EnableWireframe() {
+	m_deviceContext->RSSetState(m_rasterStateWireframe);
+
+	return;
+}
+
+void D3DClass::DisableWireframe() {
+	m_deviceContext->RSSetState(m_rasterState);
 
 	return;
 }

@@ -9,14 +9,14 @@ TimerClass::~TimerClass() {
 }
 
 bool TimerClass::Initialize() {
-	//检查系统是否支持高性能定时器
-	QueryPerformanceFrequency((LARGE_INTEGER*)&m_frequency);
-	if (m_frequency == 0) {
+	INT64 frequency;
+
+	//获取该系统的每秒速度周期
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+	if (frequency == 0) {
 		return false;
 	}
-
-	//找出频率计数器每毫秒记录多少次
-	m_ticksPerMs = (float)(m_frequency / 1000);
+	m_frequency = (float)frequency;
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_startTime);
 
@@ -25,13 +25,13 @@ bool TimerClass::Initialize() {
 
 void TimerClass::Frame() {
 	INT64 currentTime;
-	float timeDifference;
+	INT64 elapsedTicks;
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 
-	timeDifference = (float)(currentTime - m_startTime);
+	elapsedTicks = currentTime - m_startTime;
 
-	m_frameTime = timeDifference / m_ticksPerMs;
+	m_frameTime = (float)elapsedTicks / m_frequency;
 
 	m_startTime = currentTime;
 
@@ -40,4 +40,30 @@ void TimerClass::Frame() {
 
 float TimerClass::GetTime() {
 	return m_frameTime;
+}
+
+void TimerClass::StartTimer() {
+	QueryPerformanceCounter((LARGE_INTEGER*)&m_beginTime);
+
+	return;
+}
+
+void TimerClass::StopTimer() {
+	QueryPerformanceCounter((LARGE_INTEGER*)&m_endTime);
+
+	return;
+}
+
+int TimerClass::GetTiming() {
+	float elapsedTicks;
+	INT64 frequency;
+	float milliseconds;
+
+	elapsedTicks = (float)(m_endTime - m_beginTime);
+
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+
+	milliseconds = (elapsedTicks / (float)frequency) * 1000.0f;
+
+	return (int)milliseconds;
 }

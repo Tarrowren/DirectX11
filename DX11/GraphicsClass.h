@@ -7,7 +7,7 @@
 #include"TextClass.h"
 
 const bool FULL_SCREEN = false;//全屏
-const bool VSYNC_ENABLED = false;//垂直同步
+const bool VSYNC_ENABLED = true;//垂直同步
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
 
@@ -20,7 +20,7 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame(int, int, float);
+	bool Frame(int, int, float, int, int);
 	bool Render();
 
 private:

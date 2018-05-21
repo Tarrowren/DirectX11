@@ -197,7 +197,7 @@ void FontShaderClass::ShutdownShader() {
 
 void FontShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename) {
 	char* compileErrors;
-	unsigned long long bufferSize;
+	unsigned __int64 bufferSize;
 	ofstream fout;
 
 	//获取指向错误消息文本缓冲区的指针

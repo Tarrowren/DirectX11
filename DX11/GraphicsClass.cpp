@@ -114,7 +114,7 @@ void GraphicsClass::Shutdown() {
 	return;
 }
 
-bool GraphicsClass::Frame(int fps, int xcpu, float frameTime) {
+bool GraphicsClass::Frame(int fps, int xcpu, float frameTime, int mouseX, int mouseY) {
 	bool result;
 
 	//设置每秒帧数
@@ -125,6 +125,12 @@ bool GraphicsClass::Frame(int fps, int xcpu, float frameTime) {
 
 	//设置CPU使用率
 	result = m_Text->SetCpu(xcpu, m_Direct3D->GetDeviceContext());
+	if (!result) {
+		return false;
+	}
+
+	//设置鼠标的位置
+	result = m_Text->SetMousePosition(mouseX, mouseY, m_Direct3D->GetDeviceContext());
 	if (!result) {
 		return false;
 	}

@@ -1,11 +1,9 @@
 #pragma once
 #include<Windows.h>
 
-#include"InputClass.h"
-#include"GraphicsClass.h"
-#include"FpsClass.h"
-#include"CpuClass.h"
-#include"TimerClass.h"
+#include"ApplicationClass.h"
+
+#define WIN32_LEAN_AND_MEAN
 
 class SystemClass {
 
@@ -30,15 +28,9 @@ private:
 	LPCWSTR m_applicationName;
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
-
-	InputClass* m_Input;
-	GraphicsClass* m_Graphics;
-	FpsClass* m_Fps;
-	CpuClass* m_Cpu;
-	TimerClass* m_Timer;
+	ApplicationClass* m_Application;
 
 };
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-static SystemClass *ApplicationHandle = 0;
+static SystemClass* ApplicationHandle = 0;

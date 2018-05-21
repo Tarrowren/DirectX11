@@ -3,22 +3,16 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="InputClass.cpp">
-      <Filter>输入</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsClass.cpp">
-      <Filter>图形</Filter>
-    </ClCompile>
-    <ClCompile Include="SystemClass.cpp">
-      <Filter>系统</Filter>
+      <Filter>系统\应用\输入</Filter>
     </ClCompile>
     <ClCompile Include="D3DClass.cpp">
-      <Filter>Direct3D</Filter>
+      <Filter>系统\应用\Direct3D</Filter>
     </ClCompile>
     <ClCompile Include="ModelClass.cpp">
       <Filter>模型</Filter>
     </ClCompile>
     <ClCompile Include="CameraClass.cpp">
-      <Filter>摄像机</Filter>
+      <Filter>系统\应用\空间\摄像机</Filter>
     </ClCompile>
     <ClCompile Include="TextureClass.cpp">
       <Filter>纹理</Filter>
@@ -27,45 +21,60 @@
       <Filter>光</Filter>
     </ClCompile>
     <ClCompile Include="FpsClass.cpp">
-      <Filter>帧数</Filter>
+      <Filter>系统\应用\帧数</Filter>
     </ClCompile>
     <ClCompile Include="CpuClass.cpp">
-      <Filter>CPU</Filter>
+      <Filter>系统\应用\CPU</Filter>
     </ClCompile>
     <ClCompile Include="TimerClass.cpp">
-      <Filter>计时器</Filter>
+      <Filter>系统\应用\计时器</Filter>
     </ClCompile>
     <ClCompile Include="TextClass.cpp">
-      <Filter>文字</Filter>
+      <Filter>系统\应用\空间\用户界面\文字</Filter>
     </ClCompile>
     <ClCompile Include="FontClass.cpp">
-      <Filter>字体</Filter>
+      <Filter>系统\应用\空间\用户界面\字体</Filter>
     </ClCompile>
-    <ClCompile Include="LightShaderClass.cpp">
-      <Filter>着色器</Filter>
+    <ClCompile Include="PositionClass.cpp">
+      <Filter>系统\应用\空间\方位</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainClass.cpp">
+      <Filter>系统\应用\空间\地形</Filter>
     </ClCompile>
     <ClCompile Include="FontShaderClass.cpp">
-      <Filter>着色器</Filter>
+      <Filter>系统\应用\着色器\字体着色器</Filter>
+    </ClCompile>
+    <ClCompile Include="LightShaderClass.cpp">
+      <Filter>系统\应用\着色器\光着色器</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorShaderClass.cpp">
+      <Filter>系统\应用\着色器\颜色着色器</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationClass.cpp">
+      <Filter>系统\应用</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterfaceClass.cpp">
+      <Filter>系统\应用\空间\用户界面</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemClass.cpp">
+      <Filter>系统</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManagerClass.cpp">
+      <Filter>系统\应用\着色器</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoneClass.cpp">
+      <Filter>系统\应用\空间</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InputClass.h">
-      <Filter>输入</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsClass.h">
-      <Filter>图形</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemClass.h">
-      <Filter>系统</Filter>
-    </ClInclude>
     <ClInclude Include="D3DClass.h">
-      <Filter>Direct3D</Filter>
+      <Filter>系统\应用\Direct3D</Filter>
     </ClInclude>
     <ClInclude Include="ModelClass.h">
       <Filter>模型</Filter>
     </ClInclude>
     <ClInclude Include="CameraClass.h">
-      <Filter>摄像机</Filter>
+      <Filter>系统\应用\空间\摄像机</Filter>
     </ClInclude>
     <ClInclude Include="TextureClass.h">
       <Filter>纹理</Filter>
@@ -74,48 +83,60 @@
       <Filter>光</Filter>
     </ClInclude>
     <ClInclude Include="FpsClass.h">
-      <Filter>帧数</Filter>
+      <Filter>系统\应用\帧数</Filter>
     </ClInclude>
     <ClInclude Include="CpuClass.h">
-      <Filter>CPU</Filter>
+      <Filter>系统\应用\CPU</Filter>
     </ClInclude>
     <ClInclude Include="TimerClass.h">
-      <Filter>计时器</Filter>
+      <Filter>系统\应用\计时器</Filter>
     </ClInclude>
     <ClInclude Include="TextClass.h">
-      <Filter>文字</Filter>
+      <Filter>系统\应用\空间\用户界面\文字</Filter>
     </ClInclude>
     <ClInclude Include="FontClass.h">
-      <Filter>字体</Filter>
+      <Filter>系统\应用\空间\用户界面\字体</Filter>
     </ClInclude>
-    <ClInclude Include="LightShaderClass.h">
-      <Filter>着色器</Filter>
+    <ClInclude Include="PositionClass.h">
+      <Filter>系统\应用\空间\方位</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainClass.h">
+      <Filter>系统\应用\空间\地形</Filter>
     </ClInclude>
     <ClInclude Include="FontShaderClass.h">
-      <Filter>着色器</Filter>
+      <Filter>系统\应用\着色器\字体着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="LightShaderClass.h">
+      <Filter>系统\应用\着色器\光着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShaderClass.h">
+      <Filter>系统\应用\着色器\颜色着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationClass.h">
+      <Filter>系统\应用</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterfaceClass.h">
+      <Filter>系统\应用\空间\用户界面</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemClass.h">
+      <Filter>系统</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManagerClass.h">
+      <Filter>系统\应用\着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoneClass.h">
+      <Filter>系统\应用\空间</Filter>
+    </ClInclude>
+    <ClInclude Include="InputClass.h">
+      <Filter>系统\应用\输入</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="系统">
       <UniqueIdentifier>{738ea9bd-49b3-4010-94a5-f47c6708de54}</UniqueIdentifier>
     </Filter>
-    <Filter Include="图形">
-      <UniqueIdentifier>{1ac2fd94-17da-40ed-9cbc-aba7baccf37b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="输入">
-      <UniqueIdentifier>{19037a42-8208-4c2c-aa54-80f3a276f955}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Direct3D">
-      <UniqueIdentifier>{391f66b5-be6a-43b7-b02c-9f519641ae0c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="着色器">
-      <UniqueIdentifier>{7bd514d5-3f8c-4260-bf97-7d093dd6617d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="模型">
       <UniqueIdentifier>{1c7a1c87-9aab-48a2-ba83-18230ae06c44}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="摄像机">
-      <UniqueIdentifier>{91b54b65-c527-4831-8ee3-76866f1b8b62}</UniqueIdentifier>
     </Filter>
     <Filter Include="光">
       <UniqueIdentifier>{72479343-33c3-4a9d-97eb-8a0eeabdcb3c}</UniqueIdentifier>
@@ -123,34 +144,76 @@
     <Filter Include="纹理">
       <UniqueIdentifier>{b4fafd64-2ac9-4784-970b-80f322104042}</UniqueIdentifier>
     </Filter>
-    <Filter Include="计时器">
+    <Filter Include="系统\应用">
+      <UniqueIdentifier>{774d8a82-cac1-48b9-af4a-553b46891a12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\着色器">
+      <UniqueIdentifier>{7bd514d5-3f8c-4260-bf97-7d093dd6617d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\着色器\字体着色器">
+      <UniqueIdentifier>{48c367df-c9e1-4999-8baa-4ff6f2a459aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\着色器\光着色器">
+      <UniqueIdentifier>{b0b9e227-4f56-410c-a728-d21ecc3ed114}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\着色器\颜色着色器">
+      <UniqueIdentifier>{af042612-679d-4142-99a7-67443f40cc13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\输入">
+      <UniqueIdentifier>{19037a42-8208-4c2c-aa54-80f3a276f955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\Direct3D">
+      <UniqueIdentifier>{391f66b5-be6a-43b7-b02c-9f519641ae0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\计时器">
       <UniqueIdentifier>{de358a5b-a30f-4b14-8cb1-e5525e4dcc85}</UniqueIdentifier>
     </Filter>
-    <Filter Include="帧数">
-      <UniqueIdentifier>{854a7d12-d884-4d5e-bafa-adf85378487c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="CPU">
+    <Filter Include="系统\应用\CPU">
       <UniqueIdentifier>{9e0b6f9e-d6a0-4f4b-b1c8-975365845840}</UniqueIdentifier>
     </Filter>
-    <Filter Include="文字">
+    <Filter Include="系统\应用\帧数">
+      <UniqueIdentifier>{854a7d12-d884-4d5e-bafa-adf85378487c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\空间">
+      <UniqueIdentifier>{7caf0a07-8158-4ce2-aa1a-2e3e4c8bd097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\空间\摄像机">
+      <UniqueIdentifier>{91b54b65-c527-4831-8ee3-76866f1b8b62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\空间\方位">
+      <UniqueIdentifier>{a3e393f1-b974-4172-89ea-a29df4d3ccb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\空间\地形">
+      <UniqueIdentifier>{13bb2e59-93b4-4ba6-84e6-fd490f07bb58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\空间\用户界面">
+      <UniqueIdentifier>{e376df55-5e49-487a-a67b-53d26551078a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\空间\用户界面\文字">
       <UniqueIdentifier>{c45b670f-9f89-41f9-a399-b7ac7d8cf81a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="字体">
+    <Filter Include="系统\应用\空间\用户界面\字体">
       <UniqueIdentifier>{e23adae2-7dbf-479a-8b73-7d94f37e285c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="FontPixelShader.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>系统\应用\着色器\字体着色器</Filter>
     </None>
     <None Include="FontVertexShader.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>系统\应用\着色器\字体着色器</Filter>
     </None>
     <None Include="LightPixelShader.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>系统\应用\着色器\光着色器</Filter>
     </None>
     <None Include="LightVertexShader.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>系统\应用\着色器\光着色器</Filter>
+    </None>
+    <None Include="ColorVertexShader.hlsl">
+      <Filter>系统\应用\着色器\颜色着色器</Filter>
+    </None>
+    <None Include="ColorPixelShader.hlsl">
+      <Filter>系统\应用\着色器\颜色着色器</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,9 @@
 #pragma once
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"dxguid.lib")
+#include<dinput.h>
+
+//#define DIRECTINPUT_VERSION 0x0800
 
 class InputClass {
 
@@ -7,13 +12,48 @@ public:
 	InputClass();
 	~InputClass();
 
-	void Initialize();
-	void KeyDown(unsigned int);
-	void KeyUp(unsigned int);
-	bool IsKeyDown(unsigned int);
+	bool Initialize(HINSTANCE, HWND, int, int);
+	void Shutdown();
+	bool Frame();
+	bool IsEscapePressed();
+	void GetMouseLocation(int&, int&);
+	void GetMouseChange(int&, int&);
+
+	bool IsLeftPressed();
+	bool IsRightPressed();
+	bool IsUpPressed();
+	bool IsDownPressed();
+
+	bool IsWPressed();
+	bool IsSPressed();
+	bool IsAPressed();
+	bool IsDPressed();
+	bool IsSpacePressed();
+	bool IsCPressed();
+
+	bool IsF1Toggled();
+	bool IsF2Toggled();
 
 private:
 
-	bool m_keys[256];
+	bool ReadKeyboard();
+	bool ReadMouse();
+	void ProcessInput();
+
+private:
+
+	IDirectInput8 * m_directInput;
+	IDirectInputDevice8* m_keyboard;
+	IDirectInputDevice8* m_mouse;
+
+	unsigned char m_keyboardState[256];
+	DIMOUSESTATE m_mouseState;
+
+	int m_screenWidth, m_screenHeight;
+	int m_mouseX, m_mouseY;
+	int m_mouseChangeX, m_mouseChangeY;
+
+	bool m_F1_released;
+	bool m_F2_released;
 
 };

@@ -28,8 +28,13 @@ public:
 	void GetVideoCardInfo(char*, int&);//独显信息
 	void TurnZBufferOn();
 	void TurnZBufferOff();
-	void TurnOnAlphaBlending();
-	void TurnOffAlphaBlending();
+	void TurnOnCulling();
+	void TurnOffCulling();
+	void EnableAlphaBlending();
+	void EnableAlphaToCoverageBlending();
+	void DisableAlphaBlending();
+	void EnableWireframe();
+	void DisableWireframe();
 
 private:
 
@@ -49,6 +54,9 @@ private:
 	XMMATRIX m_orthoMatrix;//正面投影矩阵
 	ID3D11DepthStencilState* m_depthDisabledStencilState;
 	ID3D11BlendState* m_alphaEnableBlendingState;
+	ID3D11BlendState* m_alphaEnableBlendingState2;
 	ID3D11BlendState* m_alphaDisableBlendingState;
+	ID3D11RasterizerState* m_rasterStateNoCulling;
+	ID3D11RasterizerState* m_rasterStateWireframe;
 
 };

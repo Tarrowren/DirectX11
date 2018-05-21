@@ -9,13 +9,18 @@ FontClass::~FontClass() {
 
 }
 
-bool FontClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fontFilename, char* textureFilename) {
+bool FontClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fontFilename, char* textureFilename, float fontHeight, int spaceSize) {
 	bool result;
+
+	m_fontHeight = fontHeight;
+
+	m_spaceSize = spaceSize;
 
 	result = LoadFontData(fontFilename);
 	if (!result) {
 		return false;
 	}
+
 	result = LoadTexture(device, deviceContext, textureFilename);
 	if (!result) {
 		return false;
@@ -125,7 +130,7 @@ void FontClass::BuildVertexArray(void* vertices, char* sentence, float drawX, fl
 
 		//如果字母是空格，那么只需移动三个像素即可
 		if (letter == 0) {
-			drawX = drawX + 3.0f;
+			drawX = drawX + (float)m_spaceSize;
 		}
 		else {
 			//第一个三角形
@@ -133,11 +138,11 @@ void FontClass::BuildVertexArray(void* vertices, char* sentence, float drawX, fl
 			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].left, 0.0f);
 			index++;
 
-			vertexPtr[index].position = XMFLOAT3(drawX + m_Font[letter].size, drawY - 16, 0.0f);
+			vertexPtr[index].position = XMFLOAT3((drawX + m_Font[letter].size), (drawY - m_fontHeight), 0.0f);
 			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].right, 1.0f);
 			index++;
 
-			vertexPtr[index].position = XMFLOAT3(drawX, drawY - 16, 0.0f);
+			vertexPtr[index].position = XMFLOAT3(drawX, (drawY - m_fontHeight), 0.0f);
 			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].left, 1.0f);
 			index++;
 
@@ -150,7 +155,7 @@ void FontClass::BuildVertexArray(void* vertices, char* sentence, float drawX, fl
 			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].right, 0.0f);
 			index++;
 
-			vertexPtr[index].position = XMFLOAT3(drawX + m_Font[letter].size, drawY - 16, 0.0f);
+			vertexPtr[index].position = XMFLOAT3((drawX + m_Font[letter].size), (drawY - m_fontHeight), 0.0f);
 			vertexPtr[index].texture = XMFLOAT2(m_Font[letter].right, 1.0f);
 			index++;
 
@@ -159,4 +164,28 @@ void FontClass::BuildVertexArray(void* vertices, char* sentence, float drawX, fl
 	}
 
 	return;
+}
+
+int FontClass::GetSentencePixelLength(char* sentence) {
+	int pixelLength, numLetters, letter;
+
+	pixelLength = 0;
+	numLetters = (int)strlen(sentence);
+
+	for (int i = 0; i < numLetters; i++) {
+		letter = ((int)sentence[i]) - 32;
+
+		if (letter == 0) {
+			pixelLength += m_spaceSize;
+		}
+		else {
+			pixelLength += (m_Font[letter].size + 1);
+		}
+	}
+
+	return pixelLength;
+}
+
+int FontClass::GetFontHeight() {
+	return (int)m_fontHeight;
 }

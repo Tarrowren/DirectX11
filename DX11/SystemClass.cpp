@@ -1,11 +1,7 @@
 #include"SystemClass.h"
 
 SystemClass::SystemClass() {
-	m_Input = 0;
-	m_Graphics = 0;
-	m_Fps = 0;
-	m_Cpu = 0;
-	m_Timer = 0;
+	m_Application = 0;
 }
 
 SystemClass::~SystemClass() {
@@ -16,51 +12,19 @@ bool SystemClass::Initialize() {
 	int screenWidth, screenHeight;
 	bool result;
 
+	//在将变量发送到函数之前，将屏幕的宽度和高度初始化为零
 	screenWidth = 0;
 	screenHeight = 0;
 
 	//初始化Windows API
 	InitializeWindows(screenWidth, screenHeight);
 
-	//创建并初始化输入对象
-	m_Input = new InputClass;
-	if (!m_Input) {
+	m_Application = new ApplicationClass;
+	if (!m_Application) {
 		return false;
 	}
-	m_Input->Initialize();
-
-	//创建并初始化图形对象
-	m_Graphics = new GraphicsClass;
-	if (!m_Graphics) {
-		return false;
-	}
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	result = m_Application->Initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
 	if (!result) {
-		return false;
-	}
-
-	//创建并初始化Fps对象
-	m_Fps = new FpsClass;
-	if (!m_Fps) {
-		return false;
-	}
-	m_Fps->Initialize();
-
-	//创建并初始化Cpu对象
-	m_Cpu = new CpuClass;
-	if (!m_Cpu) {
-		return false;
-	}
-	m_Cpu->Initialize();
-
-	//创建并初始化Timer对象
-	m_Timer = new TimerClass;
-	if (!m_Timer) {
-		return false;
-	}
-	result = m_Timer->Initialize();
-	if (!result) {
-		MessageBox(m_hwnd, L"无法初始化Timer对象", L"错误", MB_OK);
 		return false;
 	}
 
@@ -68,28 +32,12 @@ bool SystemClass::Initialize() {
 }
 
 void SystemClass::Shutdown() {
-	if (m_Timer) {
-		delete m_Timer;
-		m_Timer = 0;
+	if (m_Application) {
+		m_Application->Shutdown();
+		delete m_Application;
+		m_Application = 0;
 	}
-	if (m_Cpu) {
-		m_Cpu->Shutdown();
-		delete m_Cpu;
-		m_Cpu = 0;
-	}
-	if (m_Fps) {
-		delete m_Fps;
-		m_Fps = 0;
-	}
-	if (m_Input) {
-		delete m_Input;
-		m_Input = 0;
-	}
-	if (m_Graphics) {
-		m_Graphics->Shutdown();
-		delete m_Graphics;
-		m_Graphics = 0;
-	}
+
 	ShutdownWindows();
 
 	return;
@@ -97,11 +45,12 @@ void SystemClass::Shutdown() {
 
 void SystemClass::Run() {
 	MSG msg;
-	bool done = false, result;
+	bool done, result;
 
 	//初始化消息结构
 	ZeroMemory(&msg, sizeof(MSG));
 
+	done = false;
 	while (!done) {
 		//处理窗口消息
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -128,22 +77,7 @@ void SystemClass::Run() {
 bool SystemClass::Frame() {
 	bool result;
 
-	m_Timer->Frame();
-	m_Fps->Frame();
-	m_Cpu->Frame();
-
-	//按下退出键
-	if (m_Input->IsKeyDown(VK_ESCAPE)) {
-		return false;
-	}
-
-	//对图形对象执行帧处理
-	result = m_Graphics->Frame(m_Fps->GetFps(), m_Cpu->GetCpuPercentage(), m_Timer->GetTime());
-	if (!result) {
-		return false;
-	}
-
-	result = m_Graphics->Render();
+	result = m_Application->Frame();
 	if (!result) {
 		return false;
 	}
@@ -153,22 +87,7 @@ bool SystemClass::Frame() {
 
 //自定义信息处理器
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam) {
-	switch (umsg) {
-		//检查是否有键被按下
-	case WM_KEYDOWN: {
-		m_Input->KeyDown((unsigned int)wparam);
-		return 0;
-	}
-					 //检查是否有键被松开
-	case WM_KEYUP: {
-		m_Input->KeyUp((unsigned int)wparam);
-		return 0;
-	}
-				   //其他消息发送到默认信息处理器
-	default: {
-		return DefWindowProc(hwnd, umsg, wparam, lparam);
-	}
-	}
+	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 
 void SystemClass::InitializeWindows(int &screenWidth, int &screenHeight) {
@@ -210,8 +129,8 @@ void SystemClass::InitializeWindows(int &screenWidth, int &screenHeight) {
 	if (FULL_SCREEN) {
 		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
 		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-		dmScreenSettings.dmPelsWidth = (unsigned int)screenWidth;
-		dmScreenSettings.dmPelsHeight = (unsigned int)screenHeight;
+		dmScreenSettings.dmPelsWidth = (unsigned long)screenWidth;
+		dmScreenSettings.dmPelsHeight = (unsigned long)screenHeight;
 		dmScreenSettings.dmBitsPerPel = 32;
 		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 

@@ -1,17 +1,10 @@
 #pragma once
-
 #include"FontClass.h"
-#include"FontShaderClass.h"
+#include"ShaderManagerClass.h"
 
 class TextClass {
 
 private:
-
-	struct SentenceType {
-		ID3D11Buffer* vertexBuffer, *indexBuffer;
-		int vertexCount, indexCount, maxLength;
-		float red, green, blue;
-	};
 
 	struct VertexType {
 		XMFLOAT3 position;
@@ -23,26 +16,21 @@ public:
 	TextClass();
 	~TextClass();
 
-	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, HWND, int, int, XMMATRIX);
+	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, int, int, int, bool, FontClass*, char*, int, int, float, float, float);
 	void Shutdown();
-	bool Render(ID3D11DeviceContext*, XMMATRIX, XMMATRIX);
-	bool SetFps(int, ID3D11DeviceContext*);
-	bool SetCpu(int, ID3D11DeviceContext*);
+	void Render(ID3D11DeviceContext*, ShaderManagerClass*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
+	bool UpdateSentence(ID3D11DeviceContext*, FontClass*, char*, int, int, float, float, float);
 
 private:
 
-	bool InitializeSentence(SentenceType**, int, ID3D11Device*);
-	bool UpdateSentence(SentenceType*, char*, int, int, float, float, float, ID3D11DeviceContext*);
-	void ReleaseSentence(SentenceType**);
-	bool RenderSentence(ID3D11DeviceContext*, SentenceType*, XMMATRIX, XMMATRIX);
+	bool InitializeSentence(ID3D11Device*, ID3D11DeviceContext*, FontClass*, char*, int, int, float, float, float);
+	void RenderSentence(ID3D11DeviceContext*, ShaderManagerClass*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
 
 private:
 
-	FontClass * m_Font;
-	FontShaderClass* m_FontShader;
-	int m_screenWidth, m_screenHeight;
-	XMMATRIX m_baseViewMatrix;
-	SentenceType* m_sentence1;
-	SentenceType* m_sentence2;
+	ID3D11Buffer * m_vertexBuffer, *m_indexBuffer, *m_vertexBuffer2, *m_indexBuffer2;
+	int m_screenWidth, m_screenHeight, m_maxLength, m_vertexCount, m_indexCount;
+	bool m_shadow;
+	XMFLOAT4 m_pixelColor;
 
 };
