@@ -369,3 +369,18 @@ void PositionClass::MouseLookAround(int mouseChangeX, int mouseChangeY) {
 
 	return;
 }
+
+void PositionClass::MouseScaling(int mouseChangeZ) {
+	int s = 1;
+	mouseChangeZ = mouseChangeZ * s / 100;
+	float radiansX, radiansY;
+
+	radiansX = m_rotationX * 0.0174532925f;
+	radiansY = m_rotationY * 0.0174532925f;
+
+	m_positionY -= sinf(radiansX) * mouseChangeZ;
+	m_positionX += sinf(radiansY) * cosf(radiansX) * mouseChangeZ;
+	m_positionZ += cosf(radiansY) * cosf(radiansX) * mouseChangeZ;
+
+	return;
+}

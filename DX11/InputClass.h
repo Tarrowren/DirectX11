@@ -18,11 +18,14 @@ public:
 	bool IsEscapePressed();
 	void GetMouseLocation(int&, int&);
 	void GetMouseChange(int&, int&);
+	void GetMouseWheelChange(int&);
 
 	bool IsLeftPressed();
 	bool IsRightPressed();
 	bool IsUpPressed();
 	bool IsDownPressed();
+	bool IsPgUpPressed();
+	bool IsPgDownPressed();
 
 	bool IsWPressed();
 	bool IsSPressed();
@@ -51,7 +54,7 @@ private:
 
 	int m_screenWidth, m_screenHeight;
 	int m_mouseX, m_mouseY;
-	int m_mouseChangeX, m_mouseChangeY;
+	int m_mouseChangeX, m_mouseChangeY, m_mouseChangeZ;
 
 	bool m_F1_released;
 	bool m_F2_released;

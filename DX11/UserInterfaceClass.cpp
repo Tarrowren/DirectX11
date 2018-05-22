@@ -186,8 +186,8 @@ bool UserInterfaceClass::UpdateFpsString(ID3D11DeviceContext* deviceContext, int
 	}
 
 	m_previousFps = fps;
-	if (fps > 99999) {
-		fps = 99999;
+	if (fps > 9999) {
+		fps = 9999;
 	}
 
 	_itoa_s(fps, tempString, 10);

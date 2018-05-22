@@ -117,6 +117,12 @@ void ZoneClass::HandleMovementInput(InputClass* Input, float frameTime) {
 	//下看
 	keyDown = Input->IsDownPressed();
 	m_Position->LookDownward(keyDown);
+	//靠近
+	keyDown = Input->IsPgUpPressed();
+	m_Position->MoveViewForward(keyDown);
+	//远离
+	keyDown = Input->IsPgDownPressed();
+	m_Position->MoveViewBackward(keyDown);
 
 	//上升
 	keyDown = Input->IsSpacePressed();
@@ -141,6 +147,10 @@ void ZoneClass::HandleMovementInput(InputClass* Input, float frameTime) {
 	int mouseChangeX, mouseChangeY;
 	Input->GetMouseChange(mouseChangeX, mouseChangeY);
 	m_Position->MouseLookAround(mouseChangeX, mouseChangeY);
+	//缩放
+	int mouseChangeZ;
+	Input->GetMouseWheelChange(mouseChangeZ);
+	m_Position->MouseScaling(mouseChangeZ);
 
 	m_Position->GetPosition(posX, posY, posZ);
 	m_Position->GetRotation(rotX, rotY, rotZ);
@@ -170,6 +180,7 @@ bool ZoneClass::Render(D3DClass* Direct3D, ShaderManagerClass* ShaderManager) {
 	Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_Terrain->Render(Direct3D->GetDeviceContext());
+
 	result = ShaderManager->RenderColorShader(Direct3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result) {
 		return false;

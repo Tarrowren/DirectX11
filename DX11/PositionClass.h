@@ -33,6 +33,7 @@ public:
 
 	//根据用户鼠标输入来转动相机
 	void MouseLookAround(int, int);
+	void MouseScaling(int);
 
 private:
 

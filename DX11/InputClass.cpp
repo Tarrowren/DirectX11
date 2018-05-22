@@ -23,6 +23,7 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int
 
 	m_mouseChangeX = 0;
 	m_mouseChangeY = 0;
+	m_mouseChangeZ = 0;
 
 	//初始化主要的直接输入接口
 	result = DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, NULL);
@@ -170,6 +171,7 @@ void InputClass::ProcessInput() {
 	//获取鼠标位置变化的值
 	m_mouseChangeX = m_mouseState.lX;
 	m_mouseChangeY = m_mouseState.lY;
+	m_mouseChangeZ = m_mouseState.lZ;
 
 	//确保鼠标位置不超过屏幕宽度或高度。
 	if (m_mouseX < 0) {
@@ -211,6 +213,12 @@ void InputClass::GetMouseChange(int& mouseChangeX, int& mouseChangeY) {
 	return;
 }
 
+void InputClass::GetMouseWheelChange(int& mouseChangeZ) {
+	mouseChangeZ = m_mouseChangeZ;
+
+	return;
+}
+
 bool InputClass::IsLeftPressed() {
 	if (m_keyboardState[DIK_LEFT] & 0x80) {
 		return true;
@@ -237,6 +245,22 @@ bool InputClass::IsUpPressed() {
 
 bool InputClass::IsDownPressed() {
 	if (m_keyboardState[DIK_DOWN] & 0x80) {
+		return true;
+	}
+
+	return false;
+}
+
+bool InputClass::IsPgUpPressed() {
+	if (m_keyboardState[DIK_PGUP] & 0x80) {
+		return true;
+	}
+
+	return false;
+}
+
+bool InputClass::IsPgDownPressed() {
+	if (m_keyboardState[DIK_PGDN] & 0x80) {
 		return true;
 	}
 
