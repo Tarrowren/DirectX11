@@ -18,7 +18,7 @@ public:
 
 	bool Initialize(D3DClass*, HWND, int, int, float);
 	void Shutdown();
-	bool Frame(D3DClass*, InputClass*, ShaderManagerClass*, float, int);
+	bool Frame(D3DClass*, InputClass*, ShaderManagerClass*, float, int, int);
 
 private:
 
@@ -31,6 +31,6 @@ private:
 	CameraClass* m_Camera;
 	PositionClass* m_Position;
 	TerrainClass* m_Terrain;
-	bool m_displayUI;
+	bool m_displayUI, m_wireFrame;
 
 };

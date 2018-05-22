@@ -31,6 +31,7 @@ private:
 	ShaderManagerClass* m_ShaderManager;
 	TimerClass* m_Timer;
 	FpsClass* m_Fps;
+	CpuClass* m_Cpu;
 	ZoneClass* m_Zone;
 
 };

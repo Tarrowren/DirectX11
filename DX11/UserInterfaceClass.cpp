@@ -3,6 +3,7 @@
 UserInterfaceClass::UserInterfaceClass() {
 	m_Font1 = 0;
 	m_FpsString = 0;
+	m_CpuString = 0;
 	m_VideoStrings = 0;
 	m_PositionStrings = 0;
 }
@@ -36,8 +37,17 @@ bool UserInterfaceClass::Initialize(D3DClass* Direct3D, int screenHeight, int sc
 	if (!result) {
 		return false;
 	}
-
 	m_previousFps = -1;
+
+	m_CpuString = new TextClass;
+	if (!m_CpuString) {
+		return false;
+	}
+	result = m_CpuString->Initialize(Direct3D->GetDevice(), Direct3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, m_Font1, (char*)"Cpu: 0%", 10, 70, 0.0f, 1.0f, 0.0f);
+	if (!result) {
+		return false;
+	}
+	m_previousCpu = -1;
 
 	Direct3D->GetVideoCardInfo(videoCard, videoMemory);
 	strcpy_s(videoString, "Video Card: ");
@@ -130,6 +140,11 @@ void UserInterfaceClass::Shutdown() {
 		delete m_FpsString;
 		m_FpsString = 0;
 	}
+	if (m_CpuString) {
+		m_CpuString->Shutdown();
+		delete m_CpuString;
+		m_CpuString = 0;
+	}
 	if (m_Font1) {
 		m_Font1->Shutdown();
 		delete m_Font1;
@@ -139,10 +154,15 @@ void UserInterfaceClass::Shutdown() {
 	return;
 }
 
-bool UserInterfaceClass::Frame(ID3D11DeviceContext* deviceContext, int fps, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
+bool UserInterfaceClass::Frame(ID3D11DeviceContext* deviceContext, int fps, int xcpu, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
 	bool result;
 
 	result = UpdateFpsString(deviceContext, fps);
+	if (!result) {
+		return false;
+	}
+
+	result = UpdateCpuString(deviceContext, xcpu);
 	if (!result) {
 		return false;
 	}
@@ -160,6 +180,7 @@ bool UserInterfaceClass::Render(D3DClass* Direct3D, ShaderManagerClass* ShaderMa
 	Direct3D->EnableAlphaBlending();
 
 	m_FpsString->Render(Direct3D->GetDeviceContext(), ShaderManager, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+	m_CpuString->Render(Direct3D->GetDeviceContext(), ShaderManager, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
 
 	m_VideoStrings[0].Render(Direct3D->GetDeviceContext(), ShaderManager, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
 	m_VideoStrings[1].Render(Direct3D->GetDeviceContext(), ShaderManager, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
@@ -219,6 +240,31 @@ bool UserInterfaceClass::UpdateFpsString(ID3D11DeviceContext* deviceContext, int
 	return true;
 }
 
+bool UserInterfaceClass::UpdateCpuString(ID3D11DeviceContext* deviceContext, int xcpu) {
+	char tempString[16];
+	char finalString[16];
+	bool result;
+
+	if (m_previousCpu == xcpu) {
+		return true;
+	}
+
+	m_previousCpu = xcpu;
+
+	_itoa_s(xcpu, tempString, 10);
+
+	strcpy_s(finalString, "Cpu: ");
+	strcat_s(finalString, tempString);
+	strcat_s(finalString, "%");
+
+	result = m_CpuString->UpdateSentence(deviceContext, m_Font1, finalString, 10, 70, 0.0f, 1.0f, 0.0f);
+	if (!result) {
+		return false;
+	}
+
+	return true;
+}
+
 bool UserInterfaceClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float posX, float posY, float posZ, float rotX, float rotY, float rotZ) {
 	int positionX, positionY, positionZ, rotationX, rotationY, rotationZ;
 	char tempString[16];
@@ -237,7 +283,7 @@ bool UserInterfaceClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContex
 		_itoa_s(positionX, tempString, 10);
 		strcpy_s(finalString, "X: ");
 		strcat_s(finalString, tempString);
-		result = m_PositionStrings[0].UpdateSentence(deviceContext, m_Font1, finalString, 10, 100, 1.0f, 1.0f, 1.0f);
+		result = m_PositionStrings[0].UpdateSentence(deviceContext, m_Font1, finalString, 10, 120, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 	if (positionY != m_previousPosition[1]) {
@@ -245,7 +291,7 @@ bool UserInterfaceClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContex
 		_itoa_s(positionY, tempString, 10);
 		strcpy_s(finalString, "Y: ");
 		strcat_s(finalString, tempString);
-		result = m_PositionStrings[1].UpdateSentence(deviceContext, m_Font1, finalString, 10, 120, 1.0f, 1.0f, 1.0f);
+		result = m_PositionStrings[1].UpdateSentence(deviceContext, m_Font1, finalString, 10, 140, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 	if (positionZ != m_previousPosition[2]) {
@@ -253,7 +299,7 @@ bool UserInterfaceClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContex
 		_itoa_s(positionZ, tempString, 10);
 		strcpy_s(finalString, "Z: ");
 		strcat_s(finalString, tempString);
-		result = m_PositionStrings[2].UpdateSentence(deviceContext, m_Font1, finalString, 10, 140, 1.0f, 1.0f, 1.0f);
+		result = m_PositionStrings[2].UpdateSentence(deviceContext, m_Font1, finalString, 10, 160, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 	if (rotationX != m_previousPosition[3]) {
@@ -261,7 +307,7 @@ bool UserInterfaceClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContex
 		_itoa_s(rotationX, tempString, 10);
 		strcpy_s(finalString, "rX: ");
 		strcat_s(finalString, tempString);
-		result = m_PositionStrings[3].UpdateSentence(deviceContext, m_Font1, finalString, 10, 180, 1.0f, 1.0f, 1.0f);
+		result = m_PositionStrings[3].UpdateSentence(deviceContext, m_Font1, finalString, 10, 200, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 	if (rotationY != m_previousPosition[4]) {
@@ -269,7 +315,7 @@ bool UserInterfaceClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContex
 		_itoa_s(rotationY, tempString, 10);
 		strcpy_s(finalString, "rY: ");
 		strcat_s(finalString, tempString);
-		result = m_PositionStrings[4].UpdateSentence(deviceContext, m_Font1, finalString, 10, 200, 1.0f, 1.0f, 1.0f);
+		result = m_PositionStrings[4].UpdateSentence(deviceContext, m_Font1, finalString, 10, 220, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 	if (rotationZ != m_previousPosition[5]) {
@@ -277,7 +323,7 @@ bool UserInterfaceClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContex
 		_itoa_s(rotationZ, tempString, 10);
 		strcpy_s(finalString, "rZ: ");
 		strcat_s(finalString, tempString);
-		result = m_PositionStrings[5].UpdateSentence(deviceContext, m_Font1, finalString, 10, 220, 1.0f, 1.0f, 1.0f);
+		result = m_PositionStrings[5].UpdateSentence(deviceContext, m_Font1, finalString, 10, 240, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 

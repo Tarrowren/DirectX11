@@ -36,20 +36,23 @@ bool ZoneClass::Initialize(D3DClass* Direct3D, HWND hwnd, int screenWidth, int s
 	if (!m_Position) {
 		return false;
 	}
-	m_Position->SetPosition(128.0f, 5.0f, -10.0f);
+	m_Position->SetPosition(128.0f, 10.0f, -10.0f);
 	m_Position->SetRotation(0.0f, 0.0f, 0.0f);
 
 	m_Terrain = new TerrainClass;
 	if (!m_Terrain) {
 		return false;
 	}
-	result = m_Terrain->Initialize(Direct3D->GetDevice());
+	result = m_Terrain->Initialize(Direct3D->GetDevice(), (char*)"setup.txt");
 	if (!result) {
 		MessageBox(hwnd, L"无法初始化地形对象。", L"错误", MB_OK);
 		return false;
 	}
 
 	m_displayUI = true;
+
+	//最初将线框渲染设置为启用
+	m_wireFrame = true;
 
 	return true;
 }
@@ -77,7 +80,7 @@ void ZoneClass::Shutdown() {
 	return;
 }
 
-bool ZoneClass::Frame(D3DClass* Direct3D, InputClass* Input, ShaderManagerClass* ShaderManager, float frameTime, int fps) {
+bool ZoneClass::Frame(D3DClass* Direct3D, InputClass* Input, ShaderManagerClass* ShaderManager, float frameTime, int fps, int xcpu) {
 	bool result;
 	float posX, posY, posZ, rotX, rotY, rotZ;
 
@@ -86,7 +89,7 @@ bool ZoneClass::Frame(D3DClass* Direct3D, InputClass* Input, ShaderManagerClass*
 	m_Position->GetPosition(posX, posY, posZ);
 	m_Position->GetRotation(rotX, rotY, rotZ);
 
-	result = m_UserInterface->Frame(Direct3D->GetDeviceContext(), fps, posX, posY, posZ, rotX, rotY, rotZ);
+	result = m_UserInterface->Frame(Direct3D->GetDeviceContext(), fps, xcpu, posX, posY, posZ, rotX, rotY, rotZ);
 	if (!result) {
 		return false;
 	}
@@ -158,8 +161,14 @@ void ZoneClass::HandleMovementInput(InputClass* Input, float frameTime) {
 	m_Camera->SetPosition(posX, posY, posZ);
 	m_Camera->SetRotation(rotX, rotY, rotZ);
 
+	//确定是否显示用户界面
 	if (Input->IsF1Toggled()) {
 		m_displayUI = !m_displayUI;
+	}
+
+	//确定地形是否应该以线框渲染
+	if (Input->IsF2Toggled()) {
+		m_wireFrame = !m_wireFrame;
 	}
 
 	return;
@@ -179,11 +188,19 @@ bool ZoneClass::Render(D3DClass* Direct3D, ShaderManagerClass* ShaderManager) {
 
 	Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
+	if (m_wireFrame) {
+		Direct3D->EnableWireframe();
+	}
+
 	m_Terrain->Render(Direct3D->GetDeviceContext());
 
 	result = ShaderManager->RenderColorShader(Direct3D->GetDeviceContext(), m_Terrain->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	if (!result) {
 		return false;
+	}
+
+	if (m_wireFrame) {
+		Direct3D->DisableWireframe();
 	}
 
 	if (m_displayUI) {

@@ -73,13 +73,13 @@ void PositionClass::MoveForward(bool keydown) {
 
 	//根据帧时间和用户是否按住按键来更新前进速度
 	if (keydown) {
-		m_forwardSpeed += m_frameTime * 1.0f;
+		m_forwardSpeed += m_frameTime * 5.0f;
 		if (m_forwardSpeed > (m_frameTime * 50.0f)) {
 			m_forwardSpeed = m_frameTime * 50.0f;
 		}
 	}
 	else {
-		m_forwardSpeed -= m_frameTime * 0.5f;
+		m_forwardSpeed -= m_frameTime * 5.0f;
 		if (m_forwardSpeed < 0.0f) {
 			m_forwardSpeed = 0.0f;
 		}
@@ -99,13 +99,13 @@ void PositionClass::MoveBackward(bool keydown) {
 	float radiansY;
 
 	if (keydown) {
-		m_backwardSpeed += m_frameTime * 1.0f;
+		m_backwardSpeed += m_frameTime * 5.0f;
 		if (m_backwardSpeed > (m_frameTime * 50.0f)) {
 			m_backwardSpeed = m_frameTime * 50.0f;
 		}
 	}
 	else {
-		m_backwardSpeed -= m_frameTime * 0.5f;
+		m_backwardSpeed -= m_frameTime * 5.0f;
 		if (m_backwardSpeed < 0.0f) {
 			m_backwardSpeed = 0.0f;
 		}
@@ -123,13 +123,13 @@ void PositionClass::MoveLeftward(bool keydown) {
 	float radiansY;
 
 	if (keydown) {
-		m_leftwardSpeed += m_frameTime * 1.0f;
+		m_leftwardSpeed += m_frameTime * 5.0f;
 		if (m_leftwardSpeed > (m_frameTime * 50.0f)) {
 			m_leftwardSpeed = m_frameTime * 50.0f;
 		}
 	}
 	else {
-		m_leftwardSpeed -= m_frameTime * 0.5f;
+		m_leftwardSpeed -= m_frameTime * 5.0f;
 		if (m_leftwardSpeed < 0.0f) {
 			m_leftwardSpeed = 0.0f;
 		}
@@ -147,13 +147,13 @@ void PositionClass::MoveRightward(bool keydown) {
 	float radiansY;
 
 	if (keydown) {
-		m_rightwardSpeed += m_frameTime * 1.0f;
+		m_rightwardSpeed += m_frameTime * 5.0f;
 		if (m_rightwardSpeed > (m_frameTime * 50.0f)) {
 			m_rightwardSpeed = m_frameTime * 50.0f;
 		}
 	}
 	else {
-		m_rightwardSpeed -= m_frameTime * 0.5f;
+		m_rightwardSpeed -= m_frameTime * 5.0f;
 		if (m_rightwardSpeed < 0.0f) {
 			m_rightwardSpeed = 0.0f;
 		}
@@ -169,13 +169,13 @@ void PositionClass::MoveRightward(bool keydown) {
 
 void PositionClass::MoveUpward(bool keydown) {
 	if (keydown) {
-		m_upwardSpeed += m_frameTime * 1.5f;
-		if (m_upwardSpeed > (m_frameTime * 15.0f)) {
-			m_upwardSpeed = m_frameTime * 15.0f;
+		m_upwardSpeed += m_frameTime * 5.0f;
+		if (m_upwardSpeed > (m_frameTime * 50.0f)) {
+			m_upwardSpeed = m_frameTime * 50.0f;
 		}
 	}
 	else {
-		m_upwardSpeed -= m_frameTime * 0.5f;
+		m_upwardSpeed -= m_frameTime * 5.0f;
 		if (m_upwardSpeed < 0.0f) {
 			m_upwardSpeed = 0.0f;
 		}
@@ -188,13 +188,13 @@ void PositionClass::MoveUpward(bool keydown) {
 
 void PositionClass::MoveDownward(bool keydown) {
 	if (keydown) {
-		m_downwardSpeed += m_frameTime * 1.5f;
-		if (m_downwardSpeed > (m_frameTime * 15.0f)) {
-			m_downwardSpeed = m_frameTime * 15.0f;
+		m_downwardSpeed += m_frameTime * 5.0f;
+		if (m_downwardSpeed > (m_frameTime * 50.0f)) {
+			m_downwardSpeed = m_frameTime * 50.0f;
 		}
 	}
 	else {
-		m_downwardSpeed -= m_frameTime * 0.5f;
+		m_downwardSpeed -= m_frameTime * 5.0f;
 		if (m_downwardSpeed < 0.0f) {
 			m_downwardSpeed = 0.0f;
 		}
@@ -210,13 +210,13 @@ void PositionClass::MoveViewForward(bool keydown) {
 	float radiansX, radiansY;
 
 	if (keydown) {
-		m_viewforwardSpeed += m_frameTime * 1.0f;
+		m_viewforwardSpeed += m_frameTime * 5.0f;
 		if (m_viewforwardSpeed > (m_frameTime * 50.0f)) {
 			m_viewforwardSpeed = m_frameTime * 50.0f;
 		}
 	}
 	else {
-		m_viewforwardSpeed -= m_frameTime * 0.5f;
+		m_viewforwardSpeed -= m_frameTime * 5.0f;
 		if (m_viewforwardSpeed < 0.0f) {
 			m_viewforwardSpeed = 0.0f;
 		}
@@ -236,13 +236,13 @@ void PositionClass::MoveViewBackward(bool keydown) {
 	float radiansX, radiansY;
 
 	if (keydown) {
-		m_viewbackwardSpeed += m_frameTime * 1.0f;
+		m_viewbackwardSpeed += m_frameTime * 5.0f;
 		if (m_viewbackwardSpeed > (m_frameTime * 50.0f)) {
 			m_viewbackwardSpeed = m_frameTime * 50.0f;
 		}
 	}
 	else {
-		m_viewbackwardSpeed -= m_frameTime * 0.5f;
+		m_viewbackwardSpeed -= m_frameTime * 5.0f;
 		if (m_viewbackwardSpeed < 0.0f) {
 			m_viewbackwardSpeed = 0.0f;
 		}

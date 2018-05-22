@@ -195,6 +195,12 @@
     <Filter Include="系统\应用\空间\用户界面\字体">
       <UniqueIdentifier>{e23adae2-7dbf-479a-8b73-7d94f37e285c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="系统\应用\纹理资源处理">
+      <UniqueIdentifier>{0ecd40c7-d567-4879-8e23-8f27ca0c3fd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="系统\应用\着色器\纹理着色器">
+      <UniqueIdentifier>{ab18bc2e-9ec3-4638-aae3-fbd25f98a7e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="FontPixelShader.hlsl">

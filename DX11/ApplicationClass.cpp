@@ -5,6 +5,7 @@ ApplicationClass::ApplicationClass() {
 	m_Direct3D = 0;
 	m_Timer = 0;
 	m_Fps = 0;
+	m_Cpu = 0;
 	m_ShaderManager = 0;
 	m_Zone = 0;
 }
@@ -62,6 +63,12 @@ bool ApplicationClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidt
 	}
 	m_Fps->Initialize();
 
+	m_Cpu = new CpuClass;
+	if (!m_Cpu) {
+		return false;
+	}
+	m_Cpu->Initialize();
+
 	m_Zone = new ZoneClass;
 	if (!m_Zone) {
 		return false;
@@ -84,6 +91,10 @@ void ApplicationClass::Shutdown() {
 	if (m_Fps) {
 		delete m_Fps;
 		m_Fps = 0;
+	}
+	if (m_Cpu) {
+		delete m_Cpu;
+		m_Cpu = 0;
 	}
 	if (m_Timer) {
 		delete m_Timer;
@@ -112,6 +123,7 @@ bool ApplicationClass::Frame() {
 	bool result;
 
 	m_Fps->Frame();
+	m_Cpu->Frame();
 	m_Timer->Frame();
 
 	result = m_Input->Frame();
@@ -123,7 +135,7 @@ bool ApplicationClass::Frame() {
 		return false;
 	}
 
-	result = m_Zone->Frame(m_Direct3D, m_Input, m_ShaderManager, m_Timer->GetTime(), m_Fps->GetFps());
+	result = m_Zone->Frame(m_Direct3D, m_Input, m_ShaderManager, m_Timer->GetTime(), m_Fps->GetFps(), m_Cpu->GetCpuPercentage());
 	if (!result) {
 		return false;
 	}
